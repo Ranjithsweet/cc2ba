@@ -1,23 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
+import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { customerLogin, clearCustomerError } from '../../store/slices/authSlice';
 
 function CustomerLogin() {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { loading, error } = useAppSelector(state => state.auth.customer);
+
+  // Clear error when component mounts
+  useEffect(() => {
+    dispatch(clearCustomerError());
+  }, [dispatch]);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+    // Clear error when user starts typing
+    if (error) dispatch(clearCustomerError());
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Implement login logic
-    console.log('Customer login:', formData);
+    const result = await dispatch(customerLogin({ email: formData.email, password: formData.password }));
+    
+    if (customerLogin.fulfilled.match(result)) {
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -25,7 +41,6 @@ function CustomerLogin() {
       <Helmet>
         <title>Customer Login | React App</title>
       </Helmet>
-      
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
@@ -36,7 +51,11 @@ function CustomerLogin() {
               Sign in to your customer account
             </p>
           </div>
-          
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+              {error}
+            </div>
+          )}
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
@@ -53,6 +72,7 @@ function CustomerLogin() {
                   placeholder="Email address"
                   value={formData.email}
                   onChange={handleChange}
+                  disabled={loading}
                 />
               </div>
               <div>
@@ -69,16 +89,17 @@ function CustomerLogin() {
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleChange}
+                  disabled={loading}
                 />
               </div>
             </div>
-
             <div>
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                disabled={loading}
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Sign in
+                {loading ? 'Signing in...' : 'Sign in'}
               </button>
             </div>
           </form>
