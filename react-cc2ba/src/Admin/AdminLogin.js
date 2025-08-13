@@ -68,6 +68,13 @@ function AdminLogin() {
       if (response.ok) {
         // Store token in localStorage
         localStorage.setItem('adminAuthToken', data.token);
+        
+        // Update Redux store state - dispatch the same fulfilled action as password login
+        dispatch({
+          type: adminLogin.fulfilled.type,
+          payload: data
+        });
+        
         navigate('/admin/dashboard');
       } else {
         dispatch(clearAdminError());

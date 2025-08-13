@@ -19,7 +19,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Face Recognition Service is running!"}
+    return {"message": "Welcome to Face Recognition Service!"}
 
 @app.post("/register-face")
 async def register_face(file: UploadFile = File(...)):

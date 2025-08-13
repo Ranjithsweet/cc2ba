@@ -143,7 +143,7 @@ class AuthController extends Controller
                     ]
                 ], 400);
             }
-
+            
             if (!$result['match']) {
                 return response()->json([
                     'message' => 'Face not recognized',

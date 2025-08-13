@@ -25,7 +25,7 @@ app.add_middleware(
 
 @app.get("/")
 async def root():
-    return {"message": "Simple Face Recognition Service is running!"}
+    return {"message": "Welcome to Simple Face Recognition Service!"}
 
 def process_image(image_bytes):
     """Process image and extract basic features"""
@@ -115,7 +115,7 @@ async def verify_face(file: UploadFile = File(...), face_encoding: str = Form(..
         correlation = np.corrcoef(current_features, stored_features)[0, 1]
         
         # Simple threshold-based matching
-        threshold = 0.8
+        threshold = 0.65  # Lowered threshold for more practical face recognition
         is_match = correlation > threshold if not np.isnan(correlation) else False
         
         # Calculate confidence

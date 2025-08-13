@@ -74,7 +74,7 @@ class FaceRecognitionService
                 'file',
                 file_get_contents($imagePath),
                 basename($imagePath)
-            )->asForm()->post($this->baseUrl . '/verify-face', [
+            )->post($this->baseUrl . '/verify-face', [
                 'face_encoding' => $storedEncoding
             ]);
 
@@ -102,7 +102,7 @@ class FaceRecognitionService
             if (class_exists('Illuminate\Support\Facades\Log')) {
                 Log::error('Face verification error', [
                     'error' => $e->getMessage(),
-                    'image_path' => $image_path
+                    'image_path' => $imagePath
                 ]);
             }
             return null;
